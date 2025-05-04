@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📊 | Info page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f9f9f9;
+      --text: #111;
+      --box-bg: rgba(0, 0, 0, 0.05);
+      --box-border: rgba(0, 0, 0, 0.1);
+      --label: #005050;
+      --value: #111;
+      --highlight: #00b894;
+    }
+
+    [data-theme="dark"] {
+      --bg: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+      --text: #e0ffe0;
+      --box-bg: rgba(255, 255, 255, 0.05);
+      --box-border: rgba(255, 255, 255, 0.1);
+      --label: #aaffcc;
+      --value: #ffffff;
+      --highlight: #00ffc3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      font-family: 'Fira Code', monospace;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      padding: 30px 20px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    h1 {
+      color: var(--highlight);
+      margin-bottom: 40px;
+      font-size: 2.2rem;
+      text-shadow: 0 0 10px var(--highlight);
+      text-align: center;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: 2px solid var(--highlight);
+      color: var(--highlight);
+      padding: 8px 12px;
+      font-size: 0.9em;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--highlight);
+      color: #000;
+    }
+
+    .info-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .info-box {
+      background: var(--box-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--box-border);
+      padding: 20px 24px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 255, 136, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .info-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.25);
+    }
+
+    .label {
+      font-size: 0.85em;
+      color: var(--label);
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .value {
+      font-size: 1.1em;
+      color: var(--value);
+      word-break: break-word;
+    }
+
+    footer {
+      margin-top: auto;
+      font-size: 0.85em;
+      color: var(--label);
+      text-align: center;
+      padding-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()">🌞 / 🌚</button>
+
+  <h1>📊 Info Dashboard</h1>
+
+  <div class="info-container">
+    <div class="info-box"><span class="label">📅 Date:</span> <span class="value" id="date"></span></div>
+    <div class="info-box"><span class="label">⏰ Time:</span> <span class="value" id="time"></span></div>
+    <div class="info-box"><span class="label">🌍 Timezone:</span> <span class="value" id="timezone"></span></div>
+    <div class="info-box"><span class="label">📆 Week:</span> <span class="value" id="week"></span></div>
+    <div class="info-box"><span class="label">🗓️ Day of Year:</span> <span class="value" id="dayOfYear"></span></div>
+    <div class="info-box"><span class="label">🌐 IP Address:</span> <span class="value" id="ip"></span></div>
+    <div class="info-box"><span class="label">📍 Location:</span> <span class="value" id="location"></span></div>
+    <div class="info-box" id="weather"><span class="label">🌦️ Weather:</span> <span class="value" id="weather-value"></span></div>
+    <div class="info-box"><span class="label">🎄 Christmas Countdown:</span> <span class="value" id="countdown"></span></div>
+    <div class="info-box"><span class="label">🌙 Moon Phase:</span> <span class="value" id="moon"></span></div>
+    <div class="info-box"><span class="label">🧭 Browser:</span> <span class="value" id="browser"></span></div>
+    <div class="info-box"><span class="label">🖥️ Platform:</span> <span class="value" id="platform"></span></div>
+    <div class="info-box"><span class="label">📺 Screen Resolution:</span> <span class="value" id="resolution"></span></div>
+    <div class="info-box"><span class="label">🔋 Battery:</span> <span class="value" id="battery"></span></div>
+    <div class="info-box"><span class="label">📡 Connection:</span> <span class="value" id="connection"></span></div>
+    <div class="info-box"><span class="label">⏱️ Time on Page:</span> <span class="value" id="pageTime"></span></div>
+  </div>
+
+  <footer>
+    <p>&copy; <span id="year"></span> Julian Loontjens — Made with ❤️</p>
+  </footer>
+
+  <script>
+    // Thema wisselen
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    // Thema laden
+    (() => {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+
+    const setText = (id, text) => document.getElementById(id).textContent = text;
+
+    // Date & Time
+    const now = new Date();
+    setText("date", now.toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    }));
+    setText("timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+    // Live Clock
+    function updateTime() {
+      setText("time", new Date().toLocaleTimeString('en-US'));
+      requestAnimationFrame(updateTime);
+    }
+    updateTime();
+
+    // Week number
+    function getWeekNumber(d) {
+      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const dayNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    }
+    setText("week", getWeekNumber(now));
+
+    // Day of year
+    function getDayOfYear(date) {
+      const start = new Date(date.getFullYear(), 0, 0);
+      const diff = date - start + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
+      return Math.floor(diff / (1000 * 60 * 60 * 24));
+    }
+    setText("dayOfYear", getDayOfYear(now));
+
+    // IP
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => setText("ip", data.ip));
+
+    // Geolocatie en weer
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(async position => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        setText("location", `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`);
+        try {
+          const res = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
+          if (!res.ok) throw new Error(`HTTP ${res.status} - ${res.statusText}`);
+          const data = await res.json();
+          document.getElementById("weather").innerHTML = `
+            <span class="label">Weather:</span> 
+            <span class="value">${data.weather[0].description} | ${data.main.temp}°C</span>
+          `;
+        } catch (err) {
+          document.getElementById("weather").innerHTML = `
+            <span class="label">Weather:</span> 
+            <span class="value">Error fetching weather</span>
+          `;
+          console.error("Weather fetch error:", err);
+        }
+      }, () => {
+        setText("location", "Geolocation denied or unavailable");
+      });
+    } else {
+      setText("location", "Geolocation not supported");
+    }
+
+    // Countdown to Christmas
+    function updateCountdown() {
+      const xmas = new Date(new Date().getFullYear(), 11, 25);
+      const now = new Date();
+      const diff = xmas - now;
+      if (diff <= 0) {
+        setText("countdown", "🎄 It's Christmas!");
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+      setText("countdown", `${days}d ${hours}h ${minutes}m ${seconds}s`);
+      requestAnimationFrame(updateCountdown);
+    }
+    updateCountdown();
+
+    // Moon Phase
+    function getMoonPhase(date) {
+      const lp = 2551443;
+      const now = date.getTime() / 1000;
+      const new_moon = new Date(2001, 0, 24, 13, 35).getTime() / 1000;
+      const phase = ((now - new_moon) % lp) / lp;
+      if (phase < 0.03 || phase > 0.97) return "🌑 New Moon";
+      else if (phase < 0.22) return "🌒 Waxing Crescent";
+      else if (phase < 0.28) return "🌓 First Quarter";
+      else if (phase < 0.47) return "🌔 Waxing Gibbous";
+      else if (phase < 0.53) return "🌕 Full Moon";
+      else if (phase < 0.72) return "🌖 Waning Gibbous";
+      else if (phase < 0.78) return "🌗 Last Quarter";
+      else return "🌘 Waning Crescent";
+    }
+    setText("moon", getMoonPhase(new Date()));
+
+    // Browser & Platform
+    setText("browser", navigator.userAgentData ? `${navigator.userAgentData.brands[0].brand} ${navigator.userAgentData.brands[0].version}` : navigator.userAgent);
+    setText("platform", navigator.platform);
+
+    // Resolutie
+    setText("resolution", `${window.screen.width}x${window.screen.height}`);
+
+    // Battery Status
+    if ('getBattery' in navigator) {
+      navigator.getBattery().then(battery => {
+        function updateBatteryStatus() {
+          const level = Math.round(battery.level * 100);
+          const charging = battery.charging ? "Charging" : "Not Charging";
+          setText("battery", `🔋 ${level}% ${charging}`);
+        }
+        updateBatteryStatus();
+        battery.addEventListener('chargingchange', updateBatteryStatus);
+        battery.addEventListener('levelchange', updateBatteryStatus);
+      });
+    } else {
+      setText("battery", "Not supported");
+    }
+
+    // Online / Offline status
+    function updateConnectionStatus() {
+      setText("connection", navigator.onLine ? "🟢 Online" : "🔴 Offline");
+    }
+    window.addEventListener("online", updateConnectionStatus);
+    window.addEventListener("offline", updateConnectionStatus);
+    updateConnectionStatus();
+
+    // Time on page
+    let startTime = Date.now();
+    function updatePageTime() {
+      let diff = Date.now() - startTime;
+      let seconds = Math.floor(diff / 1000) % 60;
+      let minutes = Math.floor(diff / 1000 / 60) % 60;
+      let hours = Math.floor(diff / 1000 / 60 / 60);
+      let str = `${hours > 0 ? hours + "h " : ""}${minutes}m ${seconds}s`;
+      setText("pageTime", str);
+      requestAnimationFrame(updatePageTime);
+    }
+    updatePageTime();
+
+    // Footer jaartal
+    setText("year", new Date().getFullYear());
+  </script>
+</body>
+</html>

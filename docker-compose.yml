@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  node-app:
+    build: .
+    container_name: Info-Dashboard
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: node server.js
+    environment:
+      - OPENWEATHER_API_KEY=HERE YOUR OPENWEATHER_API_KEY
